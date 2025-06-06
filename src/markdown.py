@@ -32,4 +32,48 @@ def extract_markdown_links(text):
     return matches
 
 def split_nodes_image(old_nodes):
-    
+    new_node = []
+    for old_node in old_nodes:
+        if old_node.text == "":
+            pass
+        else:
+            matches = extract_markdown_images(old_node.text)
+            if len(matches) == 0:
+                new_node.append(old_node)
+            else:                
+                split_node = []
+                original_text = old_node.text
+                for match in matches:
+                    image_alt = match[0]
+                    image_link = match[1]
+                    sections = original_text.split(f"![{image_alt}]({image_link})", 1)
+                    split_node.append(TextNode(f'{sections[0]}', TextType.TEXT))
+                    split_node.append(TextNode(f'{image_alt}', TextType.IMAGE, f'{image_link}'))
+                    original_text = sections[1]
+                new_node.extend(split_node)
+
+    return new_node
+
+def split_nodes_link(old_nodes):
+    new_node = []
+    for old_node in old_nodes:
+        if old_node.text == "":
+            pass
+        else:
+            matches = extract_markdown_links(old_node.text)
+            if len(matches) == 0:
+                new_node.append(old_node)
+            else:                
+                split_node = []
+                original_text = old_node.text
+                for match in matches:
+                    link_alt = match[0]
+                    link = match[1]
+                    sections = original_text.split(f"[{link_alt}]({link})", 1)
+                    split_node.append(TextNode(f'{sections[0]}', TextType.TEXT))
+                    split_node.append(TextNode(f'{link_alt}', TextType.LINK, f'{link}'))
+                    original_text = sections[1]
+                new_node.extend(split_node)
+
+    return new_node
+
