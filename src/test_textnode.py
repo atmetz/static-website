@@ -7,6 +7,7 @@ from markdown import (
     split_nodes_link,
     extract_markdown_links,
     extract_markdown_images,
+    text_to_textnodes,
 )
 
 
@@ -243,6 +244,65 @@ class TestSplitDelimiter(unittest.TestCase):
             ],
             new_nodes,
         )    
+
+    def test_text_to_textnode(self):
+        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        #text_to_textnodes(text)
+        new_nodes = text_to_textnodes(text)
+
+        self.assertListEqual(
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ],
+            new_nodes,
+        ) 
+
+    def test_text_to_textnode2(self):
+        text = "This is **text** word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        new_nodes = text_to_textnodes(text)
+
+        self.assertListEqual(
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ],
+            new_nodes,
+        ) 
+
+    def test_text_to_textnode3(self):
+        text = "This is _italic_ with an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a **text** word and a [link](https://boot.dev) and a `code block`"
+        new_nodes = text_to_textnodes(text)
+
+        self.assertListEqual(
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+            ],
+            new_nodes,
+        )
 
 
 if __name__ == "__main__":
