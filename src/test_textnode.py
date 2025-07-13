@@ -2,12 +2,15 @@ import unittest
 
 from textnode import TextNode, TextType, text_node_to_html_node
 from markdown import (
+    BlockType,
     split_nodes_delimiter,
     split_nodes_image,
     split_nodes_link,
     extract_markdown_links,
     extract_markdown_images,
     text_to_textnodes,
+    markdown_to_blocks,
+    block_to_block_type
 )
 
 
@@ -302,6 +305,132 @@ class TestSplitDelimiter(unittest.TestCase):
                 TextNode("code block", TextType.CODE),
             ],
             new_nodes,
+        )
+
+    def test_markdown_to_blocks(self):
+        md = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+
+    def test_markdown_to_blocks2(self):
+        md = """
+This is **bolded** paragraph
+
+
+
+    This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line    
+
+
+- This is a list
+- with items
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+
+    def test_block_to_block_type_unordered(self):
+        md = "- This is a list\n- with items"
+        block_type = block_to_block_type(md)
+        self.assertEqual(
+            block_type, BlockType.UNORDERED_LIST
+        )
+
+    def test_block_to_block_type_ordered(self):
+        md = "1. This is a list\n2. with items"
+        block_type = block_to_block_type(md)
+        self.assertEqual(
+            block_type, BlockType.ORDERED_LIST
+        )
+
+    def test_block_to_block_type_quote(self):
+        md = ">This is a quote\n>mulitple"
+        block_type = block_to_block_type(md)
+        self.assertEqual(
+            block_type, BlockType.QUOTE
+        )
+
+    def test_block_to_block_type_code(self):
+        md = "```This is a code\nblock with multiple lines```"
+        block_type = block_to_block_type(md)
+        self.assertEqual(
+            block_type, BlockType.CODE
+        )
+    def test_block_to_block_type_code_one_line(self):
+        md = "```This is a code block with one line```"
+        block_type = block_to_block_type(md)
+        self.assertEqual(
+            block_type, BlockType.CODE
+        )
+
+    def test_block_to_block_type_heading_one(self):
+        md = "#This is a heading block with one line"
+        block_type = block_to_block_type(md)
+        self.assertEqual(
+            block_type, BlockType.HEADING
+        )
+
+    def test_block_to_block_type_heading_two(self):
+        md = "##This is a heading block with one line"
+        block_type = block_to_block_type(md)
+        self.assertEqual(
+            block_type, BlockType.HEADING
+        )
+
+    def test_block_to_block_type_heading_three(self):
+        md = "###This is a heading block with one line"
+        block_type = block_to_block_type(md)
+        self.assertEqual(
+            block_type, BlockType.HEADING
+        )
+
+    def test_block_to_block_type_heading_four(self):
+        md = "####This is a heading block with one line"
+        block_type = block_to_block_type(md)
+        self.assertEqual(
+            block_type, BlockType.HEADING
+        )
+
+    def test_block_to_block_type_heading_five(self):
+        md = "#####This is a heading block with one line"
+        block_type = block_to_block_type(md)
+        self.assertEqual(
+            block_type, BlockType.HEADING
+        )
+
+    def test_block_to_block_type_heading_six(self):
+        md = "######This is a heading block with one line"
+        block_type = block_to_block_type(md)
+        self.assertEqual(
+            block_type, BlockType.HEADING
+        )
+
+    def test_block_to_block_type_heading_six_extra(self):
+        md = "#####This is a head#ing block with one line"
+        block_type = block_to_block_type(md)
+        self.assertEqual(
+            block_type, BlockType.HEADING
         )
 
 
