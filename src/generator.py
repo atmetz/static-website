@@ -54,8 +54,7 @@ def generate_page(from_path, template_path, dest_path, basepath):
     
     htmlstring = markdown_to_html_node(markdown).to_html()
     title = extract_title(markdown)
-
-    #templateone = template.replace("{{ Title }}", title)
+    
     htmlfile.write(template.replace("{{ Title }}", title).replace("{{ Content }}", htmlstring).replace('href="/', f'href="{basepath}'.replace('src="/', f'src="{basepath}')))
 
     mdfile.close()
@@ -65,7 +64,6 @@ def generate_page(from_path, template_path, dest_path, basepath):
 def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
 
     content_dirs = os.listdir(dir_path_content)
-    print(content_dirs)
 
     for content_dir in content_dirs:
         if os.path.isdir(os.path.join(dir_path_content, content_dir)):

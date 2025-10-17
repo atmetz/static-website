@@ -14,6 +14,8 @@ if len(sys.argv) > 1:
 else:
     basepath = '/'
 
+print(basepath)
+
 def main():
 
     print("Deleteing public directory...")
