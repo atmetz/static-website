@@ -54,8 +54,8 @@ def generate_page(from_path, template_path, dest_path, basepath):
     
     htmlstring = markdown_to_html_node(markdown).to_html()
     title = extract_title(markdown)
-    
-    htmlfile.write(template.replace("{{ Title }}", title).replace("{{ Content }}", htmlstring).replace('href="/', f'href="{basepath}'.replace('src="/', f'src="{basepath}')))
+
+    htmlfile.write(template.replace("{{ Title }}", title).replace("{{ Content }}", htmlstring).replace('href="/', f'href="{basepath}').replace('src="/', f'src="{basepath}'))
 
     mdfile.close()
     templatefile.close()
