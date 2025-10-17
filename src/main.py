@@ -2,23 +2,26 @@ from textnode import TextNode, TextType
 
 from htmlnode import HTMLNode, LeafNode, ParentNode
 
-from generator import copy_dir, generate_page
+from generator import copy_dir, generate_pages_recursive
 import os
 import shutil
 
-destpath = './public'
-path = './static'
+public_path = './public'
+static_path = './static'
+content_path = './content'
+template_path = "./template.html"
 
 def main():
 
     print("Deleteing public directory...")
-    if os.path.exists(destpath):
-        shutil.rmtree(destpath)
+    if os.path.exists(public_path):
+        shutil.rmtree(public_path)
     
     print("Copying static files to public directory...")
-    copy_dir(destpath, path)
+    copy_dir(public_path, static_path)
 
-    generate_page('content/index.md', 'template.html', 'public/index.html')
+    print("Generating content...")
+    generate_pages_recursive(content_path, template_path, public_path)
 
 
 

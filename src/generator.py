@@ -61,3 +61,14 @@ def generate_page(from_path, template_path, dest_path):
     mdfile.close()
     templatefile.close()
     htmlfile.close()
+
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+
+    content_dirs = os.listdir(dir_path_content)
+    print(content_dirs)
+
+    for content_dir in content_dirs:
+        if os.path.isdir(os.path.join(dir_path_content, content_dir)):
+            generate_pages_recursive(os.path.join(dir_path_content, content_dir), template_path, os.path.join(dest_dir_path, content_dir))
+        else:
+            generate_page(os.path.join(dir_path_content, content_dir), template_path, os.path.join(dest_dir_path, "index.html"))
