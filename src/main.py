@@ -2,7 +2,7 @@ from textnode import TextNode, TextType
 
 from htmlnode import HTMLNode, LeafNode, ParentNode
 
-from generator import copy_dir
+from generator import copy_dir, generate_page
 import os
 import shutil
 
@@ -17,6 +17,8 @@ def main():
     
     print("Copying static files to public directory...")
     copy_dir(destpath, path)
+
+    generate_page('content/index.md', 'template.html', 'public/index.html')
 
 
 

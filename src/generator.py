@@ -1,6 +1,8 @@
 import os
 import shutil
 
+from markdown import markdown_to_html_node
+
 
 def copy_dir(copypath, path):
 
@@ -17,3 +19,45 @@ def copy_dir(copypath, path):
             copy_dir(destfilepath, filepath)
 
     return
+
+def extract_title(markdown):
+        
+    lines = markdown.split('\n')
+
+    for line in lines:
+
+        if line.lstrip().startswith("# "):
+            title = line[2:]
+            return title.strip()
+        
+    raise Exception("No header found")
+
+def generate_page(from_path, template_path, dest_path):
+
+    print(f'Generating page from {from_path} to {dest_path} using {template_path}')
+
+    dirs = dest_path.split('/')
+    new_path = ''
+
+    for dir in dirs:
+        if dir != dirs[-1]:
+            new_path = new_path + dir + "/"
+            if not os.path.exists(new_path):
+                os.mkdir(new_path)
+
+    mdfile = open(from_path)
+    templatefile = open(template_path)
+    htmlfile = open(dest_path, "x")
+
+    template = templatefile.read()
+    markdown = mdfile.read()
+    
+    htmlstring = markdown_to_html_node(markdown).to_html()
+    title = extract_title(markdown)
+
+    templateone = template.replace("{{ Title }}", title)
+    htmlfile.write( templateone.replace("{{ Content }}", htmlstring))
+
+    mdfile.close()
+    templatefile.close()
+    htmlfile.close()
