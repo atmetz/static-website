@@ -1,15 +1,18 @@
-from textnode import TextNode, TextType
-
-from htmlnode import HTMLNode, LeafNode, ParentNode
 
 from generator import copy_dir, generate_pages_recursive
 import os
 import shutil
+import sys
 
-public_path = './public'
+public_path = './docs'
 static_path = './static'
 content_path = './content'
 template_path = "./template.html"
+
+if len(sys.argv) > 1:
+    basepath = sys.argv[1]
+else:
+    basepath = '/'
 
 def main():
 
@@ -21,7 +24,7 @@ def main():
     copy_dir(public_path, static_path)
 
     print("Generating content...")
-    generate_pages_recursive(content_path, template_path, public_path)
+    generate_pages_recursive(content_path, template_path, public_path, basepath)
 
 
 
